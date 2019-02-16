@@ -1,0 +1,7 @@
+com\halvik\rest\webservices\restfulwebservices\todo\TodoResource.class
+com\halvik\rest\webservices\restfulwebservices\repository\TodoRepository.class
+com\halvik\rest\webservices\restfulwebservices\model\Employee.class
+com\halvik\rest\webservices\restfulwebservices\model\Todo.class
+com\halvik\rest\webservices\restfulwebservices\RestfulWebServicesApplication.class
+com\halvik\rest\webservices\restfulwebservices\helloworld\HelloWorldController.class
+com\halvik\rest\webservices\restfulwebservices\helloworld\HelloWorldBean.class
