@@ -1,23 +1,16 @@
 package com.halvik.rest.webservices.restfulwebservices.todo;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
+import com.halvik.rest.webservices.restfulwebservices.model.Todo;
 import com.halvik.rest.webservices.restfulwebservices.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import com.halvik.rest.webservices.restfulwebservices.model.Todo;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
@@ -26,21 +19,19 @@ public class TodoResource {
 	@Autowired
 	private TodoRepository todoService;
 
-
-	@GetMapping("/users/{username}/todos")
-	public List<Todo> getAllTodos(@PathVariable String username){
+	@GetMapping("/users/todos")
+	public List<Todo> getAllTodos(){
 		return todoService.findAll();
 	}
 
-	@GetMapping("/users/{username}/todos/{id}")
-	public Optional<Todo> getTodo(@PathVariable String username, @PathVariable long id){
+	@GetMapping("/users/todos/{id}")
+	public Optional<Todo> getTodo(@PathVariable long id){
 		return todoService.findById(id);
 	}
 
 	//DELETE /users/{username}/todos/{id}
-	@DeleteMapping("/users/{username}/todos/{id}")
-	public ResponseEntity<Void> deleteTodo(
-			@PathVariable String username, @PathVariable long id){
+	@DeleteMapping("/users/todos/{id}")
+	public ResponseEntity<Void> deleteTodo(@PathVariable long id){
         /* Optional<Todo> todo = todoService.findById(id); */
         todoService.deleteById(id);
 
@@ -50,9 +41,8 @@ public class TodoResource {
 
 	//Edit/Update a Todo
 	//PUT /users/{user_name}/todos/{todo_id}
-	@PutMapping("/users/{username}/todos/{id}")
+	@PutMapping("/users/todos/{id}")
 	public ResponseEntity<Todo> updateTodo(
-			@PathVariable String username,
 			@PathVariable long id, @RequestBody Todo todo){
         System.out.println("todo ===>"+todo);
 
@@ -62,7 +52,7 @@ public class TodoResource {
 	}
 
 	// Create Todo
-	@PostMapping("/users/{username}/todos")
+	@PostMapping("/users/todos")
 	public ResponseEntity<Void> updateTodo(@RequestBody Todo todo){
 		System.out.println("todo ===>"+todo);
 		Todo createdTodo = todoService.save(todo);

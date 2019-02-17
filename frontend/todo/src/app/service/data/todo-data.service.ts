@@ -15,21 +15,21 @@ export class TodoDataService {
 	  console.log('retrieveAllTodos===>');
 	  console.log('username===>'+username);
 	  
-    return this.http.get<Todo[]>(`http://localhost:8080/users/${username}/todos`);
+    return this.http.get<Todo[]>(`http://localhost:8080/users/todos`);
     //console.log("Execute Hello World Bean Service")
   }
 
   deleteTodo(username, id){
-    return this.http.delete(`http://localhost:8080/users/${username}/todos/${id}`);
+    return this.http.delete(`http://localhost:8080/users/${id}`);
   }
 
   retrieveTodo(username, id){
-    return this.http.get<Todo>(`http://localhost:8080/users/${username}/todos/${id}`);
+    return this.http.get<Todo>(`http://localhost:8080/users/todos/${id}`);
   }
 
   updateTodo(username, id, todo){
     return this.http.put(
-                `http://localhost:8080/users/${username}/todos/${id}`
+                `http://localhost:8080/users/todos/${id}`
                 , todo);
   }
 
@@ -37,7 +37,7 @@ export class TodoDataService {
 	  console.log('todo ===>'+todo);
 	  
     return this.http.post(
-                `http://localhost:8080//${username}/users/todos`
+                `http://localhost:8080/users/todos`
                 , todo);
   }
 
