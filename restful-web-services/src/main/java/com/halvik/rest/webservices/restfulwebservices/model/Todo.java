@@ -13,7 +13,6 @@ import java.util.Date;
 public class Todo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
  	private long id;
 	@Column(name = "username")
 	private String username;
