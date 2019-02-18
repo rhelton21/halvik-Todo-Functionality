@@ -1,7 +1,12 @@
 package com.halvik.rest.webservices.restfulwebservices.todo;
 
+import com.halvik.rest.webservices.restfulwebservices.configuration.JobConfiguration;
+import com.halvik.rest.webservices.restfulwebservices.configuration.job.PrintJob;
+import com.halvik.rest.webservices.restfulwebservices.model.SchedulerDate;
 import com.halvik.rest.webservices.restfulwebservices.model.Todo;
+import com.halvik.rest.webservices.restfulwebservices.repository.SchedulerRepository;
 import com.halvik.rest.webservices.restfulwebservices.repository.TodoRepository;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
@@ -19,10 +31,40 @@ public class TodoResource {
 	@Autowired
 	private TodoRepository todoService;
 
-	@GetMapping("/users/todos")
+	@Autowired
+    private SchedulerRepository schedulerRepository;
+
+    @Autowired
+    private Scheduler scheduler;
+
+    @GetMapping("/users/todos")
 	public List<Todo> getAllTodos(){
 		return todoService.findAll();
 	}
+
+    @Autowired
+    JobConfiguration jobConfiguration;
+
+
+    @RequestMapping("/job")
+    public void handleJob() throws Exception{
+        jobConfiguration.job();
+    }
+
+    @RequestMapping("/scheduler")
+    public void handleSchedule() throws Exception{
+
+        SchedulerDate schedulerDate;
+        schedulerDate = schedulerRepository.getOne(1l);
+        LocalDateTime ldt = LocalDateTime.of(2016, Month.AUGUST, 22, 14, 30);
+        JobDetail jobDetail = buildJobDetail();
+        ZoneId zoneId = ZoneId.of( "America/New_York" );        //Zone information
+        ZonedDateTime zdtNewYork = ldt.atZone( zoneId );     //Local time in Asia timezone
+        Trigger trigger = buildJobTrigger(jobDetail, zdtNewYork);
+        scheduler.scheduleJob(jobDetail, trigger);
+        jobConfiguration.job();
+    }
+
 
 	@GetMapping("/users/todos/{id}")
 	public Optional<Todo> getTodo(@PathVariable long id){
@@ -65,5 +107,24 @@ public class TodoResource {
 		
 		return ResponseEntity.created(uri).build();
 	}
-		
+
+    private JobDetail buildJobDetail() {
+        JobDataMap jobDataMap = new JobDataMap();
+      return JobBuilder.newJob(PrintJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
+                .withDescription("Send Email Job")
+                .usingJobData(jobDataMap)
+                .storeDurably()
+                .build();
+    }
+    private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+        return TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().getName(), "job")
+                .withDescription("Print Job")
+                .startAt(Date.from(startAt.toInstant()))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
+    }
+
 }

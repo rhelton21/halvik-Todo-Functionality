@@ -4,6 +4,7 @@ package com.halvik.rest.webservices.restfulwebservices.configuration;
 import com.halvik.rest.webservices.restfulwebservices.model.Todo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManagerFactory;
 
 
 @Configuration
+@EnableBatchProcessing
 public class JobConfiguration {
 
     @Autowired
